@@ -19,7 +19,7 @@ public class TodoMVCServlet extends HttpServlet {
         this.repository = new InMemoryRepository();
         System.out.println("Created empty InMemoryRepository repository");
 
-        insertDummyTodos();
+//        insertDummyTodos();
     }
 
     private void insertDummyTodos() {
@@ -36,6 +36,7 @@ public class TodoMVCServlet extends HttpServlet {
         }
     }
 
+    @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         handleRequest(req, resp);
     }
