@@ -61,6 +61,7 @@ public class TodoMVCServlet extends HttpServlet {
     }
 
     String dispatchControl(String command, HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        //TODO: Replace with switch
         if (command.equals("index")) {
             Collection<Todo> all = this.repository.findAll();
 
