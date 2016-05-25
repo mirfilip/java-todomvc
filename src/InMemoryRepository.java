@@ -23,7 +23,7 @@ public class InMemoryRepository implements Repository {
     @Override
     public Collection<Todo> findAll() {
         if (this.internalMap.isEmpty()) {
-            return null;
+            return Collections.emptyList();
         } else {
             return this.internalMap.values();
         }

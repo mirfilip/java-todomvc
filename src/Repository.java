@@ -12,7 +12,7 @@ public interface Repository {
     /**
      * Returns all the maintained entities.
      *
-     * @return all entities or {@code null} if none exist
+     * @return all entities
      */
     Collection<Todo> findAll();
 
@@ -21,7 +21,7 @@ public interface Repository {
      *
      * @param ids of the entities to find
      *
-     * @return all entities found or {@code null} if none existed
+     * @return all entities found
      */
     Collection<Todo> findAll(Collection<Long> ids);
 
