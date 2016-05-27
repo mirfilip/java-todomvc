@@ -1,5 +1,6 @@
 import static org.junit.Assert.*;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -18,9 +19,8 @@ public class TodoMVCServletTest extends Mockito {
         TodoMVCServlet servlet = this.prepareServlet();
 
         HttpServletRequest request = this.prepareRequestFor("index.do");
+        this.prepareRequestDispatcherFor(request);
         HttpServletResponse response = this.prepareResponse();
-
-        //TODO: Add tests of logging. Use StringWriter
 
         servlet.doGet(request, response);
 
