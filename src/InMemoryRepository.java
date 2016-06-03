@@ -72,6 +72,7 @@ public class InMemoryRepository implements Repository {
     @Override
     public void delete(Todo entity) {
         System.out.println("Before delete - repo count " + this.internalMap.size());
+
         if (this.internalMap.containsValue(entity)) {
             System.out.println("Removing todo: \"" + entity.toString() + "\"");
             this.internalMap.remove(entity.getId());

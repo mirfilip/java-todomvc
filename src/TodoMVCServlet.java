@@ -15,6 +15,10 @@ import javax.servlet.http.HttpServletResponse;
 public class TodoMVCServlet extends HttpServlet {
     private final Repository repository;
 
+    public TodoMVCServlet(Repository repo) {
+        this.repository = repo;
+    }
+
     public TodoMVCServlet() {
         this.repository = new InMemoryRepository();
         System.out.println("Created empty InMemoryRepository repository");

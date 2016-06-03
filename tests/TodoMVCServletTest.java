@@ -1,6 +1,5 @@
 import static org.junit.Assert.*;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -11,6 +10,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collections;
 
 public class TodoMVCServletTest extends Mockito {
 
@@ -42,8 +42,28 @@ public class TodoMVCServletTest extends Mockito {
         verify(dispatcher).forward(request, response);
     }
 
+    @Test
+    public void allTodosAndCompletedTodosAreFetchedFromRepositoryAndPassedToView() throws ServletException, IOException {
+        Repository repo = mock(Repository.class);
+        when(repo.findAll()).thenReturn(Collections.<Todo> emptyList());
+
+        TodoMVCServlet servlet = this.prepareServlet(repo);
+
+        HttpServletRequest request = this.prepareRequestFor("index.do");
+        this.prepareRequestDispatcherFor(request);
+        HttpServletResponse response = this.prepareResponse();
+
+        servlet.doGet(request, response);
+
+        verify(repo, only()).findAll();
+    }
+
     private TodoMVCServlet prepareServlet() throws ServletException {
-        TodoMVCServlet servlet = new TodoMVCServlet();
+        return this.prepareServlet(null);
+    }
+
+    private TodoMVCServlet prepareServlet(Repository repo) throws ServletException {
+        TodoMVCServlet servlet = null !=repo ? new TodoMVCServlet(repo): new TodoMVCServlet();
 
         ServletConfig config = mock(ServletConfig.class);
         ServletContext context = mock(ServletContext.class);
