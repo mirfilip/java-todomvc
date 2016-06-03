@@ -25,3 +25,4 @@ Done on my own:
 * [x] Classist vs Mockists TDD
 * [x] check MyBatis
 * [x] Null Object design patter
+* [ ] Go through different types of compound types (collections, tables, hashes, maps etc.)

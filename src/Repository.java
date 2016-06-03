@@ -1,6 +1,6 @@
 import java.util.Collection;
 
-public interface Repository {
+interface Repository {
 
     /**
      * Returns the number of entities found.
