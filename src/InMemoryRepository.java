@@ -10,11 +10,8 @@ public class InMemoryRepository implements Repository {
     }
 
     public InMemoryRepository(Collection<Todo> values) {
-        // TODO: Refactor
         this.internalMap = new LinkedHashMap<>();
-        for (Todo value : values) {
-            this.internalMap.put(value.getId(), value);
-        }
+        values.stream().forEach(p -> internalMap.put(p.getId(), p));
     }
 
     @Override
