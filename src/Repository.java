@@ -1,4 +1,7 @@
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
 
 interface Repository {
 
@@ -14,16 +17,9 @@ interface Repository {
      *
      * @return all entities
      */
-    Collection<Todo> findAll();
+    List<Todo> findAll();
 
-    /**
-     * Returns all the maintained entities matching any of the the given ids.
-     *
-     * @param ids of the entities to find
-     *
-     * @return all entities found
-     */
-    Collection<Todo> findAll(Collection<Long> ids);
+    List<Todo> findAllByStatus(Predicate<Map.Entry<Long, Todo>> entryPredicate);
 
     /**
      * Returns the entity with the given id.
@@ -45,34 +41,27 @@ interface Repository {
     Todo save(Todo entity);
 
     /**
-     * Saves the given entities, overwriting any previously saved versions.
-     *
-     * @param entities to save
-     *
-     * @return the saved entities only, not failures and never {@code null}
-     */
-    Collection<Todo> save(Collection<Todo> entities);
-
-    /**
      * Deletes the given entity from the repository.
      *
      * @param entity to delete
      */
-    void delete(Todo entity);
+    int delete(Todo entity);
 
     /**
      * Deletes the entity identified by the given id.
      *
      * @param id of the entity to delete
      */
-    void delete(Long id);
+    int delete(Long id);
 
     /**
      * Deletes the given entities.
      *
      * @param entities to delete
      */
-    void delete(Collection<Todo> entities);
+    int delete(Collection<Todo> entities);
+
+    int deleteBy(Predicate<Todo> predicate);
 
     /**
      * Deletes all entities from the repository.

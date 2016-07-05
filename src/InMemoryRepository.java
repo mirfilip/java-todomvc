@@ -1,15 +1,17 @@
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class InMemoryRepository implements Repository {
-    private HashMap<Long, Todo> internalMap;
+    private Map<Long, Todo> internalMap;
 
     public InMemoryRepository() {
-        this(Collections.<Todo> emptyList());
+        this(Collections.emptyList());
     }
 
     public InMemoryRepository(Collection<Todo> values) {
         // TODO: Refactor
-        this.internalMap = new HashMap<>();
+        this.internalMap = new LinkedHashMap<>();
         for (Todo value : values) {
             this.internalMap.put(value.getId(), value);
         }
@@ -21,29 +23,24 @@ public class InMemoryRepository implements Repository {
     }
 
     @Override
-    public Collection<Todo> findAll() {
+    public List<Todo> findAll() {
         if (this.internalMap.isEmpty()) {
             return Collections.emptyList();
         } else {
-            return this.internalMap.values();
+            List<Todo> todosArray = new ArrayList<>(this.internalMap.values());
+            Collections.reverse(todosArray);
+
+            return Collections.unmodifiableList(todosArray);
         }
     }
 
     @Override
-    public Collection<Todo> findAll(Collection<Long> ids) {
-        Collection<Todo> found = new ArrayList<>();
-
-        for (Long id: ids) {
-            if (this.internalMap.containsKey(id)) {
-                found.add(this.internalMap.get(id));
-            }
-        }
-
-        if (found.isEmpty()) {
-            return null;
-        } else {
-            return found;
-        }
+    public List<Todo> findAllByStatus(Predicate<Map.Entry<Long, Todo>> entryPredicate) {
+        return internalMap.entrySet()
+                .stream()
+                .filter(entryPredicate)
+                .map(Map.Entry::getValue)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -59,38 +56,35 @@ public class InMemoryRepository implements Repository {
     }
 
     @Override
-    public Collection<Todo> save(Collection<Todo> entities) {
-        Collection<Todo> save = new ArrayList<>();
-
-        for (Todo todo : entities) {
-            save.add(this.save(todo));
-        }
-
-        return save;
+    public int delete(Todo entity) {
+        return this.delete(entity.getId());
     }
 
     @Override
-    public void delete(Todo entity) {
-        System.out.println("Before delete - repo count " + this.internalMap.size());
-
-        if (this.internalMap.containsValue(entity)) {
-            System.out.println("Removing todo: \"" + entity.toString() + "\"");
-            this.internalMap.remove(entity.getId());
-        }
-
-        System.out.println("After delete - repo count " + this.internalMap.size());
+    public int delete(Long id) {
+        Todo removedItem = this.internalMap.remove(id);
+        return null == removedItem ? 0 : 1;
     }
 
     @Override
-    public void delete(Long id) {
-        this.internalMap.remove(id);
-    }
+    public int delete(Collection<Todo> entities) {
+        int itemsDeleted = 0;
 
-    @Override
-    public void delete(Collection<Todo> entities) {
         for (Todo entity : entities) {
-            this.delete(entity);
+            itemsDeleted += this.delete(entity.getId());
         }
+
+        return itemsDeleted;
+    }
+
+    @Override
+    public int deleteBy(Predicate<Todo> predicate) {
+        Collection<Todo> allTodos = this.findAll();
+
+        return (int) allTodos.stream()
+                .filter(predicate)
+                .map(todo -> delete(todo.getId()))
+                .filter(i -> i == 1).count();
     }
 
     @Override
