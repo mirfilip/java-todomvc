@@ -10,7 +10,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Collections;
 
 public class TodoMVCServletTest extends Mockito {
 
@@ -43,11 +42,10 @@ public class TodoMVCServletTest extends Mockito {
     }
 
     @Test
-    public void allTodosAndCompletedTodosAreFetchedFromRepositoryAndPassedToView() throws ServletException, IOException {
-        Repository repo = mock(Repository.class);
-        when(repo.findAll()).thenReturn(Collections.<Todo> emptyList());
+    public void handleCallIsDelegatedToFrontController() throws ServletException, IOException {
+        FrontController controller = mock(FrontController.class);
 
-        TodoMVCServlet servlet = this.prepareServlet(repo);
+        TodoMVCServlet servlet = this.prepareServlet(controller);
 
         HttpServletRequest request = this.prepareRequestFor("index.do");
         this.prepareRequestDispatcherFor(request);
@@ -55,15 +53,15 @@ public class TodoMVCServletTest extends Mockito {
 
         servlet.doGet(request, response);
 
-        verify(repo, only()).findAll();
+        verify(controller, only()).handle(eq("index.do"), anyMapOf(String.class, String[].class));
     }
 
     private TodoMVCServlet prepareServlet() throws ServletException {
         return this.prepareServlet(null);
     }
 
-    private TodoMVCServlet prepareServlet(Repository repo) throws ServletException {
-        TodoMVCServlet servlet = null !=repo ? new TodoMVCServlet(repo): new TodoMVCServlet();
+    private TodoMVCServlet prepareServlet(FrontController controller) throws ServletException {
+        TodoMVCServlet servlet = null !=controller ? new TodoMVCServlet(controller): new TodoMVCServlet();
 
         ServletConfig config = mock(ServletConfig.class);
         ServletContext context = mock(ServletContext.class);
@@ -76,6 +74,7 @@ public class TodoMVCServletTest extends Mockito {
 
     private HttpServletRequest prepareRequestFor(String endpointUrl) {
         HttpServletRequest request = spy(HttpServletRequest.class);
+        when(request.getMethod()).thenReturn("GET");
         when(request.getRequestURI()).thenReturn(endpointUrl);
 
         return request;
