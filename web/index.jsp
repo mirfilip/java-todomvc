@@ -21,10 +21,11 @@
       <c:forEach items="${todos}" var="todo">
         <li class="${todo.getStatus().toString()}">
           <div class="view">
-            <a href="toggle.do?todo-id=${todo.getId()}"><span class="toggle"></span></a>
+            <form method="post" action="toggle.do"><input type="hidden" name="todo-id" value="${todo.getId()}" /><button class="toggle"></button></form>
+            <%--<a href="toggle.do?todo-id=${todo.getId()}"><span class="toggle"></span></a>--%>
             <label><c:out value="${todo.getTodo()}" /></label>
             <form method="post" action="delete.do"><input type="hidden" name="todo-id" value="${todo.getId()}" /><button class="destroy"></button></form>
-          </div> <input class="edit" value="Rule the web">
+          </div>
         </li>
       </c:forEach>
     </ul>
