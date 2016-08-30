@@ -41,38 +41,55 @@ public class FrontController {
 
         switch (command) {
             case "index":
-                Collection<Todo> all = repository.findAll();
-                List<Todo> completed = repository.findAllByStatus(entry -> entry.getValue().getStatus() == Todo.Status.COMPLETED);
-
-                attributes.put("todos", all);
-                attributes.put("completed", completed);
+                handleIndex(attributes);
                 break;
             case "new":
-                String newTodoTitle = params.get("new-todo")[0];
-                Todo newTodo = new Todo(newTodoTitle);
-
-                repository.save(newTodo);
+                handleCreate(params.get("new-todo")[0]);
                 break;
-            case "toggle": {
-                Long todoId = Long.parseLong(params.get("todo-id")[0]);
-                Todo todo = repository.findOne(todoId);
-                Todo.Status toggledStatus = todo.getStatus() == Todo.Status.ACTIVE ? Todo.Status.COMPLETED : Todo.Status.ACTIVE;
-
-                Todo changedTodo = new Todo(todo, toggledStatus);
-                repository.save(changedTodo);
+            case "toggle":
+                handleToggle(params.get("todo-id")[0]);
                 break;
-            }
-            case "delete": {
-                Long todoId = Long.parseLong(params.get("todo-id")[0]);
-                repository.delete(todoId);
+            case "delete":
+                handleDelete(params.get("todo-id")[0]);
                 break;
-            }
             case "clear":
-                repository.deleteBy(t -> t.getStatus() == Todo.Status.COMPLETED);
+                handleClear();
                 break;
         }
 
         return attributes;
+    }
+
+    private void handleClear() {
+        repository.deleteBy(t -> t.getStatus() == Todo.Status.COMPLETED);
+    }
+
+    private void handleIndex(Map<String, Collection<Todo>> attributes) {
+        Collection<Todo> all = repository.findAll();
+        List<Todo> completed = repository.findAllByStatus(entry -> entry.getValue().getStatus() == Todo.Status.COMPLETED);
+
+        attributes.put("todos", all);
+        attributes.put("completed", completed);
+    }
+
+    private void handleCreate(String s) {
+        Todo newTodo = new Todo(s);
+
+        repository.save(newTodo);
+    }
+
+    private void handleDelete(String s) {
+        Long todoId = Long.parseLong(s);
+        repository.delete(todoId);
+    }
+
+    private void handleToggle(String s) {
+        Long todoId = Long.parseLong(s);
+        Todo todo = repository.findOne(todoId);
+        Todo.Status toggledStatus = todo.getStatus() == Todo.Status.ACTIVE ? Todo.Status.COMPLETED : Todo.Status.ACTIVE;
+
+        Todo changedTodo = new Todo(todo, toggledStatus);
+        repository.save(changedTodo);
     }
 
     String parseCommand(String requestURI) {
